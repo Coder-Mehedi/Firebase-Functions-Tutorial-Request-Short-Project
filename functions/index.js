@@ -1,19 +1,19 @@
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
-
-// http request 1
-exports.randomNumber = functions.https.onRequest((req, res) => {
-	const number = Math.round(Math.random() * 100);
-	res.send(number.toString());
+// Auth Trigger (New User Signup)
+exports.newUserSignup = functions.auth.user().onCreate((user) => {
+	// for background trigger you must return a value/promise
+	return admin.firestore().collection("users").doc(user.uid).set({
+		email: user.email,
+		upvotedOn: [],
+	});
 });
 
-// http callable function
-exports.sayHello = functions.https.onCall((data, context) => {
-	return `hello, ${data.name}`;
+// Auth Trigger (user deleted)
+exports.userDeleted = functions.auth.user().onDelete((user) => {
+	// for background trigger you must return a value/promise
+	const doc = admin.firestore().collection("users").doc(user.uid);
+	return doc.delete();
 });
