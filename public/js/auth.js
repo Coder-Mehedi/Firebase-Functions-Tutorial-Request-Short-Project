@@ -28,3 +28,39 @@ registerForm.addEventListener("submit", (e) => {
 			registerForm.querySelector(".error").textContent = err.message;
 		});
 });
+
+// Login form
+loginForm.addEventListener("submit", (e) => {
+	e.preventDefault();
+	const email = loginForm.email.value;
+	const password = loginForm.password.value;
+	firebase
+		.auth()
+		.signInWithEmailAndPassword(email, password)
+		.then((user) => {
+			console.log("logged in", user);
+			loginForm.reset();
+		})
+		.catch((err) => {
+			loginForm.querySelector(".error").textContent = err.message;
+		});
+});
+
+// sign out
+signOut.addEventListener("click", () => {
+	firebase
+		.auth()
+		.signOut()
+		.then(() => console.log("signed out"));
+});
+
+// auth listener
+firebase.auth().onAuthStateChanged((user) => {
+	if (user) {
+		authWrapper.classList.remove("open");
+		authModals.forEach((modal) => modal.classList.remove("active"));
+	} else {
+		authWrapper.classList.add("open");
+		authModals[0].classList.add("active");
+	}
+});
