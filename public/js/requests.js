@@ -1,3 +1,14 @@
+// Notification
+const notification = document.querySelector(".notification");
+const showNotification = (message) => {
+	notification.textContent = message;
+	notification.classList.add("active");
+	setTimeout(() => {
+		notification.textContent = "";
+		notification.classList.remove("active");
+	}, 4000);
+};
+
 var app = new Vue({
 	el: "#app",
 	data: {
@@ -6,7 +17,7 @@ var app = new Vue({
 	methods: {
 		upvoteRequest(id) {
 			const upvote = firebase.functions().httpsCallable("upvote");
-			upvote({ id }).catch((err) => console.log(err.message));
+			upvote({ id }).catch((err) => showNotification(err.message));
 		},
 	},
 	mounted() {
